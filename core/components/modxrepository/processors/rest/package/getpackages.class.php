@@ -38,7 +38,7 @@ class modxRepositoryGetPackagesClass  extends modxRepositoryProcessor{
             'instructions',
             'changelog',
             'file',
-            'downloads',
+            'downloads'
         );
         
         
@@ -73,6 +73,7 @@ class modxRepositoryGetPackagesClass  extends modxRepositoryProcessor{
         
         $q = $this->modx->newQuery('modResource');
         $q->innerJoin('modTemplateVarResource', 'object_id', "object_id.contentid = modResource.id");
+        $q->innerJoin('modTemplateVarResource', 'downloads', "downloads.contentid = modResource.id");
         $q->innerJoin('modResource', 'r', 'r.parent = modResource.id');
         $q->innerJoin('modTemplateVarResource', 'r_object_id', "r_object_id.contentid = r.id");
         $q->innerJoin('modTemplateVarResource', '`release`', "`release`.contentid = r.id");
@@ -94,12 +95,11 @@ class modxRepositoryGetPackagesClass  extends modxRepositoryProcessor{
                 "version_minor.contentid = r.id AND version_minor.tmplvarid = ". $this->TVs['version_minor']);
         $q->leftJoin('modTemplateVarResource', 'version_patch', 
                 "version_patch.contentid = r.id AND version_patch.tmplvarid = ". $this->TVs['version_patch']);
-        $q->leftJoin('modTemplateVarResource', 'downloads', 
-                "downloads.contentid = r.id AND downloads.tmplvarid = ". $this->TVs['downloads']);
         
         $q->select(array(
             'modResource.*',
             'modResource.id as package_id',
+            'downloads.value as downloads',
             'object_id.value as object_id',
             'r_object_id.value as release_id',
             'r.id as r_content_id',
@@ -119,7 +119,6 @@ class modxRepositoryGetPackagesClass  extends modxRepositoryProcessor{
             'changelog.value as changelog',
             'file.value as file',
             'file.id as file_id',
-            'downloads.value as downloads',
         ));
         
         
@@ -131,6 +130,7 @@ class modxRepositoryGetPackagesClass  extends modxRepositoryProcessor{
             'r.deleted'   => 0,
             'r.hidemenu'  => 0,
             'object_id.tmplvarid'  => $this->TVs['object_id'],
+            'downloads.tmplvarid'  => $this->TVs['downloads'],
             'r_object_id.tmplvarid'  => $this->TVs['object_id'],
             '`release`.tmplvarid'  => $this->TVs['release'],
             'file.tmplvarid'  => $this->TVs['file'],
